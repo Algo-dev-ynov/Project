@@ -1,2 +1,5 @@
 # Environnement
 API/env_algo
+
+#Cache
+API/script/__pycache__/
