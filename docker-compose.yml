@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    volumes:
+      - .:/Project
+    working_dir: /Project
+    command: python main.py
