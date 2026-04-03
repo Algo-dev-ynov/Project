@@ -3,7 +3,7 @@ import requests  # Requête HTTP
 import json  # Format JSON
 import time  # Gère le temps
 import os  # Interaction avec le système
-
+from pathlib import Path
 
 
 class Api:
@@ -217,3 +217,29 @@ class Api:
 		total = extract_data()  # Appelle la fonction qui extrait les données
 
 		print(f"Extraction terminée : {total} objets")
+
+
+	def extract_types(self):
+		all_types = []
+
+		for file_path in Path(self.path_output).glob("*.ndjson"):  # Trouve tous les fichiers .ndjson
+			print(".")
+			with open(file_path, "r", encoding="utf-8") as f:
+				for line_number, line in enumerate(f, start=1):
+					line = line.strip()
+
+					if not line:
+						continue
+
+					try:
+						data = json.loads(line)
+					except json.JSONDecodeError:
+						print(f"Erreur JSON dans {file_path.name}, ligne {line_number}")
+						continue
+
+					types = data.get("type", [])
+
+					if isinstance(types, list):
+						all_types.extend(types)
+
+		return all_types
