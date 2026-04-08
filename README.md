@@ -134,7 +134,7 @@ This starts MongoDB locally on <code>localhost:27017</code></p>
 <br>
 This will:
 <br>
-- Step 1: Read raw data from <code>./API/data_raw_ndjson/</code> and insert into <code>place_raw</code>
+- Step 1: Read raw data from <code>./data_lake/</code> and insert into <code>place_raw</code>
 <br>
 - Step 2: Transform and clean data, insert into <code>place_clean</code>
 <br>
