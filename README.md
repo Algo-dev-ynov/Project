@@ -143,9 +143,9 @@ This will:
 <br>
 You can skip to a specific step using:
 <br>
-<code>python -m data_loader 2</code> (skip step 1, start from step 2)
+<code>python data_loader 2</code> (skip step 1, start from step 2)
 <br>
-<code>python -m data_loader 3</code> (skip steps 1-2, only generate ratings)</p>
+<code>python data_loader 3</code> (skip steps 1-2, only generate ratings)</p>
 
 <h3>4. View Data</h3>
 <p>Connect to MongoDB at <code>mongodb://root:root@localhost:27017/</code> using MongoDB Compass to view data in the <code>tourisme_data</code> database with collections:
