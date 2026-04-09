@@ -228,13 +228,19 @@ class DatatoursimeDownload:
 
 		checkpoint = self._load_checkpoint()  # Appelle la fonction pour voir s'il existe un état de reprise
 
-		if checkpoint and ((checkpoint["total_count"]/checkpoint["page_count"]) == self.page_size): # Vérifie si checkpoint est vide ou non
-			print("Checkpoint trouvé. Reprise en cours...")
-			url = checkpoint["next_url"]  # Récupère l'URL stockée dans le checkpoint
-			page_count = checkpoint["page_count"]  # Récupère le nombre de pages déjà traitées
-			file_index = checkpoint["file_index"]  # Récupère le numéro du fichier courant
-			total_count = checkpoint["total_count"]  # Récupère le nombre d'objets déjà traités
-			print(f"Reprise depuis page ~{page_count + 1} | Objets déjà sauvegardés : {total_count}")
+		if checkpoint: # Vérifie si checkpoint existe
+			try:
+				ratio = checkpoint["total_count"]/checkpoint["page_count"] # Vérifie si checkpoint est vide
+			except ZeroDivisionError:
+				ratio = None
+			
+			if ratio == self.page_size:
+				print("Checkpoint trouvé. Reprise en cours...")
+				url = checkpoint["next_url"]  # Récupère l'URL stockée dans le checkpoint
+				page_count = checkpoint["page_count"]  # Récupère le nombre de pages déjà traitées
+				file_index = checkpoint["file_index"]  # Récupère le numéro du fichier courant
+				total_count = checkpoint["total_count"]  # Récupère le nombre d'objets déjà traités
+				print(f"Reprise depuis page ~{page_count + 1} | Objets déjà sauvegardés : {total_count}")
 		else:  # Démarre une extraction neuve
 			print("Début de l'extraction...")
 			url = f"{self.url_api}?api_key={self.api_key}&page=1&page_size={self.page_size}&lang=fr"  # Construit l'URL de départ
