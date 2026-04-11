@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-API_URL = "http://127.0.0.1:5000"
+API_URL = "https://flask-api-tourisme.onrender.com"
 
 st.set_page_config(page_title="TourismeAir", layout="wide", page_icon="🏠")
 

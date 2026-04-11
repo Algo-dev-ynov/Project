@@ -4,7 +4,7 @@ import folium
 from streamlit_folium import st_folium
 from datetime import date, timedelta
 
-API_URL = "http://127.0.0.1:5000"
+API_URL = "https://flask-api-tourisme.onrender.com"
 
 st.set_page_config(page_title="Détail", layout="wide", page_icon="🏠")
 
