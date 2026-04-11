@@ -3,7 +3,10 @@ import requests  # Requête HTTP
 import json  # Format JSON
 import time  # Gère le temps
 import os  # Interaction avec le système
-from .downloader.datatourisme_download import DatatoursimeDownload
+from .downloader.api_client import DatatourismeApiClient
+from .downloader.checkpoint import CheckpointManager
+from .downloader.writer import NdjsonWriter
+from .downloader.extractor import DatatourismeExtractor
 from .downloader.picture import Picture
 from dotenv import load_dotenv
 
@@ -23,10 +26,18 @@ page_size = 21  # Nombre d'objets demandés par page à l'API
 time_sleep = 0.1 # Temps avant de reprendre une requête
 
 
+
 if __name__ == "__main__":
-	datatoursime_download = DatatoursimeDownload(api_key,url_api,path_output,path_state,page_file,page_size,time_sleep) # Objet
-	datatoursime_download.extract_data() # Extrait les données depuis l'API
-	# print(set(datatoursime_download.extract_types())) # Affiche la liste des types de POI
+
+	api_client = DatatourismeApiClient(api_key,url_api)
+	checkpoint_manager = CheckpointManager(path_state)
+	writer = NdjsonWriter(path_output)
+
+	extractor = DatatourismeExtractor(api_client,checkpoint_manager,writer,page_size,page_file,time_sleep)
+
+	total = extractor.run()
+	print(f"Extraction terminée : {total} objets")
+
 
 	picture = Picture(path_output,path_picture) # Objet
 	# picture.process_files() # Extrait les images depuis les données et les enregistre
