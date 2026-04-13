@@ -44,8 +44,8 @@ if st.button("← Retour"):
 col_left, col_right = st.columns([3, 2])
 
 with col_left:
-    index = st.session_state.get('selected_index', 1)
-    st.image(f"https://picsum.photos/seed/{index+1}/700/300", use_container_width=True)
+    image_url = place.get('image_url') or f"https://picsum.photos/seed/1/700/300"
+    st.image(image_url, use_container_width=True)
     st.markdown(f"### {place.get('label', 'Sans nom')}")
 
     address = place.get('address', {})
@@ -106,6 +106,7 @@ with col_right:
         st.session_state['checkin'] = checkin
         st.session_state['checkout'] = checkout
         st.session_state['price'] = place.get('price', 0)
+        st.session_state['image_url'] = place.get('image_url', '')
         st.switch_page("pages/Reservation.py")
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -129,7 +130,7 @@ for j, s in enumerate(suggestions):
     with sug_cols[j]:
         st.markdown(f"""
             <div class="sug-card">
-                <img src="https://picsum.photos/seed/{j+30}/400/120" />
+                <img src="{s.get('image_url') or f'https://picsum.photos/seed/{j+30}/400/120'}" />
                 <div class="sug-card-body">
                     <b>{s.get('label','')[:35]}</b><br>
                     <span style="color:#717171;">{s.get('address',{}).get('addressLocality','')}</span><br>

@@ -31,6 +31,20 @@ class DictFlattener:
 
         return dict(items)
 
+# extract only some needed types
+
+ALLOWED_TYPES = [
+    "Accommodation",
+    "Hotel",
+    "HotelTrade",
+    "LodgingBusiness",
+    "BedAndBreakfast",
+    "Guesthouse",
+    "SelfCateringAccommodation",
+    "RentalAccommodation",
+    "CampingAndCaravanning",
+    "Camping",
+]
 
 class StructuredDataExtractor:
     def __init__(self):
@@ -51,7 +65,14 @@ class StructuredDataExtractor:
 
         return dict(grouped)
 
+
+
     def extract_structured_record(self, record: Dict[str, Any]) -> Dict[str, Any]:
+
+        # dans extract_structured_record(), avant le return :
+        if not any(t in ALLOWED_TYPES for t in record.get("type", [])):
+            return None
+
         flattened = self.flattener.flatten(record.copy())
         regrouped = self.regroup_flattened_data(flattened)
         extracted = {
@@ -65,6 +86,7 @@ class StructuredDataExtractor:
             "price": None,
             "uuid": record.get("uuid", "N/A"),
             "uri": record.get("uri", "N/A"),
+            "image_url": None
         }
 
         # Extract geo location from isLocatedAt
@@ -103,15 +125,22 @@ class StructuredDataExtractor:
                 "homepage": contact.get("0_homepage"),
             }
 
+        # Extrait l'URL de l'image
+        try:
+            extracted["image_url"] = record["hasMainRepresentation"][0]["hasRelatedResource"][0]["locator"][0]
+        except (KeyError, IndexError, TypeError):
+            extracted["image_url"] = None
+
+
         # Add randomized price for demonstration (since original data doesn't have price)
         extracted["price"] = randint(0, 100)
         return extracted
 
-    def extract_from_records(
-        self, records: List[Dict[str, Any]]
-    ) -> List[Dict[str, Any]]:
-        return [self.extract_structured_record(record) for record in records]
 
+    # extract_from_records(), ignorer les None :
+    def extract_from_records(self, records: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        results = [self.extract_structured_record(r) for r in records]
+        return [r for r in results if r is not None]
 
 class RawToCleanInserter(MongoConnection):
     def __init__(self):

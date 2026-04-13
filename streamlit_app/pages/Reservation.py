@@ -24,7 +24,8 @@ index = st.session_state.get('selected_index', 1)
 nights = (checkout - checkin).days if checkout > checkin else 0
 
 st.markdown("### Réservation")
-st.image(f"https://picsum.photos/seed/{index+1}/700/200", use_container_width=True)
+image_url = st.session_state.get('image_url') or "https://picsum.photos/seed/1/700/200"
+st.image(image_url, use_container_width=True)
 
 st.markdown("### Vos informations")
 col1, col2 = st.columns(2)
