@@ -23,7 +23,7 @@
 <h2>Tree</h2>
 
 <p><code>.
-├── doc
+├── doc # Contient toutes la documention sur le code de data_download
 │   ├── downloader # Folder containing all Python doc
 │   │   ├── datatourisme_download.html
 │   │   └── picture.html
