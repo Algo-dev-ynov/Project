@@ -25,6 +25,7 @@ types = requests.get(f"{API_URL}/places/types").json()
 
 col1, col2, col3, col4 = st.columns([3, 2, 2, 1])
 with col1:
+    st.markdown("**Search for an accomodation**")
     search = st.text_input("", placeholder="Rechercher une ville, un lieu...", label_visibility="collapsed")
 with col2:
     st.markdown("**Région**")
@@ -98,6 +99,7 @@ for msg in st.session_state.messages:
 user_input = st.chat_input("Ex: 'hotel à Paris', 'je veux réserver un camping'...")
 
 if user_input:
+    
     st.session_state.messages.append({"role": "user", "content": user_input})
     
     user_lower = user_input.lower()
@@ -139,6 +141,10 @@ if user_input:
     elif any(kw in user_lower for kw in search_keywords) or detected_type or detected_city:
         intent = "search"
 
+    if user_input:
+        st.write(f"DEBUG — input reçu : {user_input}")
+        st.write(f"DEBUG — intent : {intent}")
+        st.write(f"DEBUG — city : {detected_city}, type : {detected_type}")
 
     # Réponse et action
     if intent == "search":
