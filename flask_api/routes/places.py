@@ -13,9 +13,9 @@ def get_places():
 
     query = {}
     if city:
-        query['address.addressLocality'] = city
+        query['address.addressLocality'] = {'$regex': city, '$options': 'i'}
     if type_:
-        query['type'] = type_
+        query['type'] = {'$regex': type_, '$options': 'i'}
 
     places = list(collection.find(query, {'_id': 0}).limit(20))
     return jsonify(places)

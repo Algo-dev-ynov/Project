@@ -86,130 +86,131 @@ for i, place in enumerate(places):
 
 # ------------------------------- caht bot ---------------------------------------------------------
 
-st.markdown("---")
-st.markdown("### 🤖 Assistant TourismeAir")
+with st.sidebar: 
+    st.markdown("---")
+    st.markdown("### 🤖 Assistant TourismeAir")
 
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
 
-for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
-        st.write(msg["content"])
+    for msg in st.session_state.messages:
+        with st.chat_message(msg["role"]):
+            st.write(msg["content"])
 
-user_input = st.chat_input("Ex: 'hotel à Paris', 'je veux réserver un camping'...")
-
-if user_input:
-    
-    st.session_state.messages.append({"role": "user", "content": user_input})
-    
-    user_lower = user_input.lower()
-    
-    # Détection intention réservation
-    reserve_keywords = ["réserver", "reserver", "réservation", "reservation", "booker", "book"]
-    # Détection intention recherche
-    search_keywords = ["cherche", "recherche", "trouver", "trouve", "voir", "montrer", "afficher"]
-    # Types d'hébergement
-    type_keywords = {
-        "hotel": "Hotel",
-        "hôtel": "Hotel", 
-        "camping": "Camping",
-        "gite": "SelfCateringAccommodation",
-        "gîte": "SelfCateringAccommodation",
-        "chambre": "BedAndBreakfast",
-        "appartement": "RentalAccommodation",
-    }
-
-    intent = None
-    detected_type = None
-    detected_city = None
-
-    # Détection type
-    for kw, val in type_keywords.items():
-        if kw in user_lower:
-            detected_type = val
-            break
-
-    # Détection ville — cherche mot après "à", "a", "en", "sur"
-    import re
-    city_match = re.search(r'\b(?:à|a|en|sur|près de|pres de)\s+([a-zA-ZÀ-ÿ\-]+)', user_lower)
-    if city_match:
-        detected_city = city_match.group(1).capitalize()
-
-    # Détection intention
-    if any(kw in user_lower for kw in reserve_keywords):
-        intent = "reserve"
-    elif any(kw in user_lower for kw in search_keywords) or detected_type or detected_city:
-        intent = "search"
+    user_input = st.chat_input("Ex: 'hotel à Paris', 'je veux réserver un camping'...")
 
     if user_input:
-        st.write(f"DEBUG — input reçu : {user_input}")
-        st.write(f"DEBUG — intent : {intent}")
-        st.write(f"DEBUG — city : {detected_city}, type : {detected_type}")
+        
+        st.session_state.messages.append({"role": "user", "content": user_input})
+        
+        user_lower = user_input.lower()
+        
+        # Détection intention réservation
+        reserve_keywords = ["réserver", "reserver", "réservation", "reservation", "booker", "book"]
+        # Détection intention recherche
+        search_keywords = ["cherche", "recherche", "trouver", "trouve", "voir", "montrer", "afficher"]
+        # Types d'hébergement
+        type_keywords = {
+            "hotel": "Hotel",
+            "hôtel": "Hotel", 
+            "camping": "Camping",
+            "gite": "SelfCateringAccommodation",
+            "gîte": "SelfCateringAccommodation",
+            "chambre": "BedAndBreakfast",
+            "appartement": "RentalAccommodation",
+        }
 
-    # Réponse et action
-    if intent == "search":
-        params = {}
-        if detected_city:
-            params["city"] = detected_city
-        if detected_type:
-            params["type"] = detected_type
-        
-        results = requests.get(f"{API_URL}/places", params=params).json()
-        
-        reply = f"Bien reçu ! 🙏 J'ai enregistré votre demande et j'ai trouvé **{len(results)} hébergement(s)**"
-        if detected_city:
-            reply += f" à **{detected_city}**"
-        if detected_type:
-            reply += f" de type **{detected_type}**"
-        reply += ". Voici les résultats ci-dessous !"
-        
-        st.session_state.messages.append({"role": "assistant", "content": reply})
-        st.session_state["chatbot_results"] = results
+        intent = None
+        detected_type = None
+        detected_city = None
 
-    elif intent == "reserve":
-        reserve_match = re.search(
-            r'(?:réserver|reserver|booker|book)\s+(?:l\'|le|la|les|un|une)?\s*(?:hotel|hôtel|camping|gite|gîte|chambre|appartement)?\s*([a-zA-ZÀ-ÿ\s\-]+)',
-            user_lower
-        )
-        label = reserve_match.group(1).strip() if reserve_match else user_input
+        # Détection type
+        for kw, val in type_keywords.items():
+            if kw in user_lower:
+                detected_type = val
+                break
 
-        search_results = requests.get(f"{API_URL}/places/search", params={"label": label}).json()
-        
-        if search_results:
-            reply = f"Parfait ! 🙏 Merci pour votre demande, je vous redirige vers **{search_results[0].get('label')}** pour finaliser la réservation."
+        # Détection ville — cherche mot après "à", "a", "en", "sur"
+        import re
+        city_match = re.search(r'\b(?:à|a|en|sur|près de|pres de)\s+([a-zA-ZÀ-ÿ\-]+)', user_lower)
+        if city_match:
+            detected_city = city_match.group(1).capitalize()
+
+        # Détection intention
+        if any(kw in user_lower for kw in reserve_keywords):
+            intent = "reserve"
+        elif any(kw in user_lower for kw in search_keywords) or detected_type or detected_city:
+            intent = "search"
+
+        if user_input:
+            st.write(f"DEBUG — input reçu : {user_input}")
+            st.write(f"DEBUG — intent : {intent}")
+            st.write(f"DEBUG — city : {detected_city}, type : {detected_type}")
+
+        # Réponse et action
+        if intent == "search":
+            params = {}
+            if detected_city:
+                params["city"] = detected_city
+            if detected_type:
+                params["type"] = detected_type
+            
+            results = requests.get(f"{API_URL}/places", params=params).json()
+            
+            reply = f"Bien reçu ! 🙏 J'ai enregistré votre demande et j'ai trouvé **{len(results)} hébergement(s)**"
+            if detected_city:
+                reply += f" à **{detected_city}**"
+            if detected_type:
+                reply += f" de type **{detected_type}**"
+            reply += ". Voici les résultats ci-dessous !"
+            
             st.session_state.messages.append({"role": "assistant", "content": reply})
-            st.session_state["selected_uuid"] = search_results[0].get("uuid")
-            st.rerun()
+            st.session_state["chatbot_results"] = results
+
+        elif intent == "reserve":
+            reserve_match = re.search(
+                r'(?:réserver|reserver|booker|book)\s+(?:l\'|le|la|les|un|une)?\s*(?:hotel|hôtel|camping|gite|gîte|chambre|appartement)?\s*([a-zA-ZÀ-ÿ\s\-]+)',
+                user_lower
+            )
+            label = reserve_match.group(1).strip() if reserve_match else user_input
+
+            search_results = requests.get(f"{API_URL}/places/search", params={"label": label}).json()
+            
+            if search_results:
+                reply = f"Parfait ! 🙏 Merci pour votre demande, je vous redirige vers **{search_results[0].get('label')}** pour finaliser la réservation."
+                st.session_state.messages.append({"role": "assistant", "content": reply})
+                st.session_state["selected_uuid"] = search_results[0].get("uuid")
+                st.rerun()
+            else:
+                reply = "Merci pour votre demande ! 🙏 Pourriez-vous préciser le nom de l'hébergement que vous souhaitez réserver ?"
+                st.session_state.messages.append({"role": "assistant", "content": reply})
+            
         else:
-            reply = "Merci pour votre demande ! 🙏 Pourriez-vous préciser le nom de l'hébergement que vous souhaitez réserver ?"
+            reply = "Merci pour votre message ! 🙏 Essayez par exemple : *'je cherche un hôtel à Lyon'* ou *'je veux réserver un camping'*."
             st.session_state.messages.append({"role": "assistant", "content": reply})
         
-    else:
-        reply = "Merci pour votre message ! 🙏 Essayez par exemple : *'je cherche un hôtel à Lyon'* ou *'je veux réserver un camping'*."
-        st.session_state.messages.append({"role": "assistant", "content": reply})
-    
-    st.rerun()
+        st.rerun()
 
-# Affiche les résultats du chatbot si présents
-if "chatbot_results" in st.session_state and st.session_state["chatbot_results"]:
-    st.markdown("**Résultats de votre recherche :**")
-    chat_cols = st.columns(4)
-    for i, place in enumerate(st.session_state["chatbot_results"][:8]):
-        uuid = place.get('uuid', '')
-        with chat_cols[i % 4]:
-            st.markdown(f"""
-                <div class="card">
-                    <img src="{place.get('image_url') or f'https://picsum.photos/seed/{i+50}/400/150'}" />
-                    <div class="card-body">
-                        <h4>{place.get('label', 'Sans nom')}</h4>
-                        <p class="city">{place.get('address', {}).get('addressLocality', '')}</p>
-                        <p class="price">{place.get('price', 'N/A')} €</p>
+    # Affiche les résultats du chatbot si présents
+    if "chatbot_results" in st.session_state and st.session_state["chatbot_results"]:
+        st.markdown("**Résultats de votre recherche :**")
+        chat_cols = st.columns(4)
+        for i, place in enumerate(st.session_state["chatbot_results"][:8]):
+            uuid = place.get('uuid', '')
+            with chat_cols[i % 4]:
+                st.markdown(f"""
+                    <div class="card">
+                        <img src="{place.get('image_url') or f'https://picsum.photos/seed/{i+50}/400/150'}" />
+                        <div class="card-body">
+                            <h4>{place.get('label', 'Sans nom')}</h4>
+                            <p class="city">{place.get('address', {}).get('addressLocality', '')}</p>
+                            <p class="price">{place.get('price', 'N/A')} €</p>
+                        </div>
                     </div>
-                </div>
-            """, unsafe_allow_html=True)
-            if st.button("Voir", key=f"chat_btn_{uuid}_{i}"):
-                st.session_state['selected_uuid'] = uuid
-                st.switch_page("pages/Detail.py")
+                """, unsafe_allow_html=True)
+                if st.button("Voir", key=f"chat_btn_{uuid}_{i}"):
+                    st.session_state['selected_uuid'] = uuid
+                    st.switch_page("pages/Detail.py")
 
 
 
