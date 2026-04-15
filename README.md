@@ -71,12 +71,12 @@ cd Project</code>
 <h3>Install dependencies :</h3>
 <strong>Linux</strong>
 <br>
-<code>pip3 install -r requirement.txt</code>
+<code>pip3 install -r requirements.txt</code>
 <br>
 <br>
 <strong>Windows</strong>
 <br>
-<code>pip install -r requirement.txt</code>
+<code>pip install -r requirements.txt</code>
 <br>
 <br>
 
