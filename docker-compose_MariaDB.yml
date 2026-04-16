@@ -1,0 +1,13 @@
+version: "3.9"
+
+mariadb:
+  container_name: algo-mariadb
+  image: mariadb:11
+  ports:
+    - "3306:3306"
+  environment:
+    MARIADB_ROOT_PASSWORD: root
+    MARIADB_DATABASE: tourisme_dw
+  volumes:
+    - .docker/mariadb:/var/lib/mysql
+  restart: always
