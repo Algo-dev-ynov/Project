@@ -7,6 +7,15 @@ db = Database()
 
 @bp.route('/ratings/<uuid>', methods=['GET'])
 def get_ratings(uuid):
+    """
+    Récupère les avis (ratings) associés à un lieu.
+
+    Args:
+        uuid (str): identifiant unique du lieu
+
+    Returns:
+        JSON: liste des avis ou erreur 404 si aucun résultat
+    """
     collection = db.get_collection(Config.COLLECTION_RATINGS)
     ratings = list(collection.find({'uuid': uuid}, {'_id': 0}))
     if not ratings:
