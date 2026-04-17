@@ -21,3 +21,4 @@ streamlit
 folium
 streamlit-folium
 dnspython
+mysql-connector-python==9.4.0
